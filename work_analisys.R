@@ -35,8 +35,6 @@ dati_tot$sesquiterpene8=NULL # missing value presence
 dati_sel=dati_tot[-c(which(dati_tot$miX==1),soliton_vector,337:340),] # purged
 
 
-
-
 #######################################################################################################
 # data standardisation
 
