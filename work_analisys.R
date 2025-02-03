@@ -1,7 +1,7 @@
 ################################################################################
 # load libraries & set working directory & set ramdom seeds
 
-setwd("C:\\aaa_lavori\\lav_elicrisio_2025")
+setwd("")
 
 #######################################################################################################
                  
@@ -14,13 +14,13 @@ set.seed(123)
 
 #######################################################################################################
 
-dati_tot=read.csv("https://raw.githubusercontent.com/alfcrisci/alf_working_data/main/dati_wild_elicrisio.csv",dec = ",")
+dati_tot=read.csv("dati_wild_elicrisio.csv")
 
-write.csv(dati_tot,"dati_wild_elicrisio.csv")
+
 cat("\014") # clean console
 
 #######################################################################################################
-# Purging data by EDA 
+# Purging data by informations retrieved by preliminary EDA 
 
 # N=10
 
@@ -40,6 +40,7 @@ dati_sel=dati_tot[-c(which(dati_tot$miX==1),soliton_vector,337:340),] # purged
 
 
 #######################################################################################################
+# data standardisation
 
 dati_sel_rel=100*dati_sel[,7:47]/dati_sel$TOT_mono.sesqui
 
@@ -77,7 +78,6 @@ dati_sel_rel=dati_monosesquimiche
 
 write.xlsx(list(aree=dati_sel,perc_relativi=dati_sel_rel),"matrice_aree_dati.xlsx") # to write data in local
 
-
 # if scaled needed decomment
 
 # dati_monosesquimiche_std <- dati_monosesquimiche %>% mutate_all(~(scale(.) %>% as.vector))
@@ -98,6 +98,7 @@ col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA")
 # plot
 
 pdf(file="06.CORR_plot_pearson_tot.pdf",width=22,height=20)
+
 corrplot(mat_corr_sel , method="color", col=col(200),  
          type="upper", 
          order="hclust",
@@ -123,6 +124,7 @@ highcorrelated=c(13, #a_terpinolene
                  39, #guaiol
                  23  #iso_italicene
 )
+
 names(dati_sel_rel)[highcorrelated]
 
 
@@ -134,7 +136,6 @@ multiColl::CN(dati_sel_rel) # 44.40231 col linearity!!!
 
 a=multiCol(dati_sel_rel, graf = TRUE)
 
-
 id_VIF=which(names(dati_sel_rel) %in% c("italicene","isoitalicene","a.ylangene","fenchene","d.limonene","b.pinene","a.muurolene")==T)
 
 dati_sel_rel_LDA=dati_sel_rel[, -id_VIF]
@@ -145,7 +146,7 @@ saveRDS(dati_sel_rel_LDA,"dati_sel_rel_LDA.rds")
 
 
 ###################################################################################
-# Wild sampling classification use
+#   Wild sampling sites classification used
 #   WorkGgroup  (CI-CII-CIII  EI-EII-EIII-EIV-EV-EVI   GI-GII-GIII)
 #   Island classification Isole
 #   Capraia (CI-CII-CIII)
@@ -187,14 +188,14 @@ dend_all=fviz_dend(res.hk,
 
 dend_all
 
-dati_sel$WorkGroup_dup[res.hk$cluster==4]  # Gruppo Elba in prevalenza ( Enfola "E_II" Elba E_IV)
-dati_sel$WorkGroup_dup[res.hk$cluster==3]  # Gruppo Giglio in prevalenza  "E_V" "G_I" "G_II" "G_III"
-dati_sel$WorkGroup_dup[res.hk$cluster==2]  # Gruppo Capraia in prevalenza 
+dati_sel$WorkGroup_dup[res.hk$cluster==4]  # Gruppo Elba prevalence ( Enfola "E_II" Elba E_IV)
+dati_sel$WorkGroup_dup[res.hk$cluster==3]  # Gruppo Giglio prevalence "E_V" "G_I" "G_II" "G_III"
+dati_sel$WorkGroup_dup[res.hk$cluster==2]  # Gruppo Capraia prevalence
 dati_sel$WorkGroup_dup[res.hk$cluster==1]  # Gruppo Misto 1
 
-dati_sel$Work_prop2[res.hk$cluster==4]  # 
-dati_sel$Work_prop2[res.hk$cluster==3]  # Gruppo Giglio in prevalenza 
-dati_sel$Work_prop2[res.hk$cluster==2]  # Gruppo Capraia in prevalenza Gruppo capraia (CI-CII-CIII-EI) 
+dati_sel$Work_prop2[res.hk$cluster==4]  #  Gruppo Elba prevalence ( Enfola "E_II" Elba E_IV)
+dati_sel$Work_prop2[res.hk$cluster==3]  # Gruppo Giglio prevalence 
+dati_sel$Work_prop2[res.hk$cluster==2]  # Gruppo Capraia prevalence (CI-CII-CIII-EI) 
 dati_sel$Work_prop2[res.hk$cluster==1]  # Gruppo Misto 1
 
 
@@ -290,7 +291,7 @@ color_cluster_dendro <- c("#FF0000", #cluster 1
 type=c(rep("monoterpenes",21),rep("sesquiterpenes",20))
 
 #######################################################################
-# plotting PCA
+# plotting linear PCA
 
 # explained variance
 
@@ -470,10 +471,6 @@ eli_lda %>%
 
 #############################################################################
 
-
-
-
-
 ##########################################################################
 # Code References
 # https://davetang.github.io/muse/pheatmap.html
@@ -484,9 +481,10 @@ eli_lda %>%
 # https://corybrunson.github.io/ordr/reference/lda-ord.html
 
 
+##########################################################################
+# Other  References
+
 # D. A. Belsley (1991). Conditioning diagnostics: collinearity and weak dara in regression. John Wiley & Sons, New York.
-
-
 #' Kolde R (2019). _pheatmap: Pretty Heatmaps_. R package version 1.0.12,
 #' <https://CRAN.R-project.org/package=pheatmap>.
 #' 
