@@ -35,21 +35,18 @@ dati_tot$sesquiterpene8=NULL # missing value presence
 dati_sel=dati_tot[-c(which(dati_tot$miX==1),soliton_vector,337:340),] # purged
 
 
-# dim(dati_tot)
-# 316  46
 
 
 #######################################################################################################
 # data standardisation
 
-dati_sel_rel=100*dati_sel[,7:47]/dati_sel$TOT_mono.sesqui
+dati_sel_rel=100*dati_sel[,8:48]/dati_sel$TOT_mono.sesqui
 
-dati_monosesqui=cbind(100*dati_sel[,7:28]/dati_sel$TOT_Mono,
-                   100*dati_sel[,29:47]/(dati_sel$TOT_mono.sesqui-dati_sel$TOT_Mono))
+dati_monosesqui=cbind(100*dati_sel[,8:27]/dati_sel$TOT_Mono,
+                   100*dati_sel[,27:48]/(dati_sel$TOT_mono.sesqui-dati_sel$TOT_Mono))
       
-dati_monosesquimiche=cbind(100*dati_sel[,7:28]/dati_sel$TOT_Mono,
-                      100*dati_sel[,29:47]/(dati_sel$TOT_mono.sesqui))
-
+dati_monosesquimiche=cbind(100*dati_sel[,8:27]/dati_sel$TOT_Mono,
+                      100*dati_sel[,28:48]/(dati_sel$TOT_mono.sesqui))
 #######################################################################################################
 # imposing michelozzi's approach
 
