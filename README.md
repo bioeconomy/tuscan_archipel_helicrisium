@@ -3,7 +3,7 @@
 *Helichrysum italicum from the Tuscan Archipelago*
 
 Lorenzo Marini 1,2*, Michele Moretta 1,2, Alberto Masoni 1, Paolo Armanasco 1, 
-Marco Michelozzi 3,2, Gabriele Cencietti 3,2, Alfonso Crisci 3,2, 
+Marco Michelozzi 3,2, Gabriele Cencietti 3,2, Alfonso Crisci 4, 
 Gelsomina Fico 5 , Piero Bruschi 1,2, Enrico Palchetti 1,2 
 
 1 Department of Agriculture, Food, Environment and Forestry, DAGRI, University of Florence, Piazzale delle Cascine 18, 50144, Firenze, Italy
