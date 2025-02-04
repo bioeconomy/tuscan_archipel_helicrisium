@@ -1,7 +1,7 @@
 ################################################################################
 # load libraries & set working directory & set ramdom seeds
 
-setwd("")
+setwd("C:\\aaa_lavori\\lav_elicrisio_2025")
 
 #######################################################################################################
                  
@@ -14,13 +14,14 @@ set.seed(123)
 
 #######################################################################################################
 
-dati_tot=read.csv("dati_wild_elicrisio.csv")
+# dati_tot=read.csv("https://raw.githubusercontent.com/bioeconomy/tuscan_archipel_helicrisium/main/dati_wild_elicrisio.csv",dec = ",")
 
+dati_tot=read.csv("dati_wild_elicrisio.csv")
 
 cat("\014") # clean console
 
 #######################################################################################################
-# Purging data by informations retrieved by preliminary EDA 
+# Purging data by EDA 
 
 # N=10
 
@@ -35,8 +36,11 @@ dati_tot$sesquiterpene8=NULL # missing value presence
 dati_sel=dati_tot[-c(which(dati_tot$miX==1),soliton_vector,337:340),] # purged
 
 
+# dim(dati_sel)
+# 316  46
+
+
 #######################################################################################################
-# data standardisation
 
 dati_sel_rel=100*dati_sel[,8:48]/dati_sel$TOT_mono.sesqui
 
@@ -45,33 +49,29 @@ dati_monosesqui=cbind(100*dati_sel[,8:27]/dati_sel$TOT_Mono,
       
 dati_monosesquimiche=cbind(100*dati_sel[,8:27]/dati_sel$TOT_Mono,
                       100*dati_sel[,28:48]/(dati_sel$TOT_mono.sesqui))
+
 #######################################################################################################
 # imposing michelozzi's approach
 
 dati_sel_rel=dati_monosesquimiche
 
-# [1] "a.pinene"            "fenchene"           
-# [3] "camphene"            "b.pinene"           
-# [5] "b.myrcene"           "a.phellandrene"     
-# [7] "a.terpinene"         "d.limonene"         
-# [9] "cineolo"             "b.ocimene"          
-# [11] "g.terpinene"         "p.cymene"           
-# [13] "terpinolene"         "neryl.propionate"   
-# [15] "nerol"               "neryl.isovaleriate" 
-# [17] "neryl.acetate"       "linalool"           
-# [19] "terpinen.4.ol"       "a.terpineol"        
-# [21] "a.ylangene"          "a.copaene"          
-# [23] "isoitalicene"        "italicene"          
-# [25] "cis.a.bergamotene"   "trans.a.bergamotene"
-# [27] "b.caryophillene"     "guaia.6.9.diene"    
-# [29] "b.farnesene"         "g.curcumene"        
-# [31] "a.muurolene"         "b.bisabolene"       
-# [33] "d.cadinene"          "b.selinene"         
-# [35] "b.curcumene"         "selinene"           
-# [37] "a.curcumene"         "C15H26O2"           
-# [39] "guaiol"              "rosifoliol"   
+# [1] "a.pinene"            "fenchene"            "camphene"           
+# [4] "b.pinene"            "b.myrcene"           "a.phellandrene"     
+# [7] "a.terpinene"         "d.limonene"          "cineolo"            
+# [10] "b.ocimene"           "g.terpinene"         "p.cymene"           
+# [13] "terpinolene"         "neryl.propionate"    "nerol"              
+# [16] "neryl.isovaleriate"  "neryl.acetate"       "linalool"           
+# [19] "terpinen.4.ol"       "a.terpineol"         "a.ylangene"         
+# [22] "a.copaene"           "isoitalicene"        "italicene"          
+# [25] "cis.a.bergamotene"   "trans.a.bergamotene" "b.caryophillene"    
+# [28] "guaia.6.9.diene"     "b.farnesene"         "g.curcumene"        
+# [31] "a.muurolene"         "b.bisabolene"        "d.cadinene"         
+# [34] "b.selinene"          "b.curcumene"         "selinene"           
+# [37] "a.curcumene"         "C15H26O2"            "guaiol"             
+# [40] "sesquiterpene.4"     "rosifoliol"  
 
 write.xlsx(list(aree=dati_sel,perc_relativi=dati_sel_rel),"matrice_aree_dati.xlsx") # to write data in local
+
 
 # if scaled needed decomment
 
@@ -82,7 +82,7 @@ write.xlsx(list(aree=dati_sel,perc_relativi=dati_sel_rel),"matrice_aree_dati.xls
 
 # correlation matrix and significance
 
-mat_corr_sel <- cor(dati_sel[,7:47],method = "pearson" )
+mat_corr_sel <- cor(dati_sel[,8:48],method = "pearson" )
 
 p.mat_wild <- cor.mtest(as.matrix(mat_corr_sel))
 
@@ -93,7 +93,6 @@ col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA")
 # plot
 
 pdf(file="06.CORR_plot_pearson_tot.pdf",width=22,height=20)
-
 corrplot(mat_corr_sel , method="color", col=col(200),  
          type="upper", 
          order="hclust",
@@ -119,7 +118,6 @@ highcorrelated=c(13, #a_terpinolene
                  39, #guaiol
                  23  #iso_italicene
 )
-
 names(dati_sel_rel)[highcorrelated]
 
 
@@ -131,6 +129,7 @@ multiColl::CN(dati_sel_rel) # 44.40231 col linearity!!!
 
 a=multiCol(dati_sel_rel, graf = TRUE)
 
+
 id_VIF=which(names(dati_sel_rel) %in% c("italicene","isoitalicene","a.ylangene","fenchene","d.limonene","b.pinene","a.muurolene")==T)
 
 dati_sel_rel_LDA=dati_sel_rel[, -id_VIF]
@@ -141,7 +140,7 @@ saveRDS(dati_sel_rel_LDA,"dati_sel_rel_LDA.rds")
 
 
 ###################################################################################
-#   Wild sampling sites classification used
+# Wild sampling classification use
 #   WorkGgroup  (CI-CII-CIII  EI-EII-EIII-EIV-EV-EVI   GI-GII-GIII)
 #   Island classification Isole
 #   Capraia (CI-CII-CIII)
@@ -183,36 +182,46 @@ dend_all=fviz_dend(res.hk,
 
 dend_all
 
-dati_sel$WorkGroup_dup[res.hk$cluster==4]  # Gruppo Elba prevalence ( Enfola "E_II" Elba E_IV)
-dati_sel$WorkGroup_dup[res.hk$cluster==3]  # Gruppo Giglio prevalence "E_V" "G_I" "G_II" "G_III"
-dati_sel$WorkGroup_dup[res.hk$cluster==2]  # Gruppo Capraia prevalence
+dati_sel$WorkGroup_dup[res.hk$cluster==4]  # Gruppo Elba in prevalenza ( Enfola "E_II" Elba E_IV)
+dati_sel$WorkGroup_dup[res.hk$cluster==3]  # Gruppo Giglio in prevalenza  "E_V" "G_I" "G_II" "G_III"
+dati_sel$WorkGroup_dup[res.hk$cluster==2]  # Gruppo Capraia in prevalenza 
 dati_sel$WorkGroup_dup[res.hk$cluster==1]  # Gruppo Misto 1
 
-dati_sel$Work_prop2[res.hk$cluster==4]  #  Gruppo Elba prevalence ( Enfola "E_II" Elba E_IV)
-dati_sel$Work_prop2[res.hk$cluster==3]  # Gruppo Giglio prevalence 
-dati_sel$Work_prop2[res.hk$cluster==2]  # Gruppo Capraia prevalence (CI-CII-CIII-EI) 
+dati_sel$Work_prop2[res.hk$cluster==4]  # 
+dati_sel$Work_prop2[res.hk$cluster==3]  # Gruppo Giglio in prevalenza 
+dati_sel$Work_prop2[res.hk$cluster==2]  # Gruppo Capraia in prevalenza Gruppo capraia (CI-CII-CIII-EI) 
 dati_sel$Work_prop2[res.hk$cluster==1]  # Gruppo Misto 1
 
 
 ####################################################################################################
 # Statistic summaries
 
-dati_sel_rel=100*dati_sel[,7:47]/dati_sel$TOT_mono.sesqui
+  dati_sel_rel=100*dati_sel[,8:48]/dati_sel$TOT_mono.sesqui
+  
+  dati_sel_rel_group=data.frame(dati_sel_rel,WorkGroup=dati_sel$WorkGroup)
+  dati_sel_rel_clus=data.frame(dati_sel_rel,cluster4=res.hk$cluster)
+  dati_sel_rel_group_miche=data.frame(dati_monosesquimiche,WorkGroup=dati_sel$WorkGroup)
+  
+  summarise_group <- dati_sel_rel_group |> tbl_summary(by = WorkGroup,
+                                              statistic = list(
+                                                all_continuous() ~ "{mean} ± ({sd})"),digits = all_continuous() ~ 1)|>as_gt() |> 
+                                                                                                                          gt::gtsave(filename = "summarise_group_data_single.docx")
+  summarise_miche <- dati_sel_rel_group_miche |> tbl_summary(by = WorkGroup,
+                                                       statistic = list(
+                                                         all_continuous() ~ "{mean} ± ({sd})"),digits = all_continuous() ~ 1)|>as_gt() |> 
+                                                                                                                                        gt::gtsave(filename = "summarise_group_data_miche.docx")
+  
+  summarise_clus <- dati_sel_rel_clus |> tbl_summary(by = cluster4,
+                                                       statistic = list(
+                                                         all_continuous() ~ "{mean} ± ({sd})"),digits = all_continuous() ~ 1)|>as_gt() |> gt::gtsave(filename = "summarise_cluster_data_single.docx")
 
-dati_sel_rel_group=data.frame(dati_sel_rel,WorkGroup=dati_sel$WorkGroup)
-dati_sel_rel_clus=data.frame(dati_sel_rel,cluster4=res.hk$cluster)
+################################################################################
+# kruskal   
+aa=col_kruskalwallis(dati_sel_rel_group_miche[1:41], dati_sel_rel_group_miche$WorkGroup)
+aa  |> kable(format="html") |> cat(file = "ks_table.docx")  
 
-summarise_group <- dati_sel_rel_group |> tbl_summary(by = WorkGroup,
-                                            statistic = list(
-                                              all_continuous() ~ "{mean} ± ({sd})"),digits = all_continuous() ~ 1)|>as_gt() |> 
-                                                                                                                        gt::gtsave(filename = "summarise_group_data_single.docx")
-
-summarise_clus <- dati_sel_rel_clus |> tbl_summary(by = cluster4,
-                                                     statistic = list(
-                                                       all_continuous() ~ "{mean} ± ({sd})"),digits = all_continuous() ~ 1)|>as_gt() |> gt::gtsave(filename = "summarise_cluster_data_single.docx")
-
-
-
+# col_kruskalwallis(dati_sel_rel_group_miche[1:41], dati_sel_rel_clus$cluster4)
+  
 ################################################################################
 #  Clustering analysis on sampling group means # Lorenzo marini
 
@@ -255,6 +264,12 @@ summarise_clusters <-  dati_sel_rel_clus |> tbl_summary(by = cluster4,
                                                           all_continuous() ~ "{mean} ± ({sd})"),digits = everything() ~ 1)|>as_gt() |> 
                                                                                                                                     gt::gtsave(filename = "summarise_clus_data_mean.docx")
 
+
+
+
+
+
+
 #######################################################################
 # 12 rows and cluster obtained labels
 
@@ -286,17 +301,17 @@ color_cluster_dendro <- c("#FF0000", #cluster 1
 type=c(rep("monoterpenes",21),rep("sesquiterpenes",20))
 
 #######################################################################
-# plotting linear PCA
+# plotting PCA
 
 # explained variance
 
-scree_plot=fviz_eig(pca_prcomp_wild_2020, main = "Wild population 2020 - Explained variance",addlabels = TRUE, ylim = c(0, 50))
+scree_plot=factoextra::fviz_eig(pca_prcomp_wild_2020, main = "Wild population 2020 - Explained variance",addlabels = TRUE, ylim = c(0, 50))
 
 scree_plot
 
 ggsave(filename="scree_plot_PCA_wild_data.png",scree_plot,width=900,height=500,units = "px")
 
-PCA_final_wild_2020 <- fviz_pca_biplot(pca_prcomp_wild_2020, 
+PCA_final_wild_2020 <- factoextra::fviz_pca_biplot(pca_prcomp_wild_2020, 
                                        # fill individuals by groups
                                        geom.ind = c("text","point"),
                                        col.ind = "black",
@@ -325,9 +340,28 @@ ggsave(filename="PCA_wild_data1.png")
 #ggsave(filename="PCA_wild_data.png",PCA_final_wild_2020,width=900,height=600,units = "px")
 
 
+
+
+
+
+
+
+
+
+
+
+
+####################################################################################
+
+
+
+
+
+
+
+
 ####################################################################################
 # Supervised methods : LDA  
-
 # LDA
 # Prior probabilities of groups: 
 # the proportion of training observations in each group. 
@@ -353,27 +387,42 @@ dati_test=X[-training.samples, ]
 dati_test$Y=Y[-training.samples]
 dati_train$Y=Y[training.samples]
 
+model_folda_campio <- folda(datX = X, response = Y, subsetMethod = "all")
+model_folda_campio
 model <- lda(Y~., data =dati_train)
 predictions_train_lda <- model %>% predict(dati_train)
 predictions_lda <- model %>% predict(dati_test)
+predictions_lda_molda <- predict(model_folda_campio,dati_test)
+
 model_accuracy_lda=mean(predictions_lda$class==dati_test$Y)
+LD_1_2=model$scaling[,1:2] 
+eigvalues<-scale(model$scaling, F, sqrt(colSums(model$scaling^2)))
+manova1<-manova(as.matrix(X)~Y)
+summary(manova1,test="Wilks")
+aa=discriminant.significance(model$scaling,
+                             dim(dati_train)[2]-1,
+                             length(unique(dati_train$Y)),
+                             dim(dati_train)[1])
+gw_obj = greedy.wilks(Y ~ ., data=dati_train, niveau= 0.5) 
+gw_obj
 
 ##################################################################################################################
 # Accuracy statistics  classification
 
+res_lda_campio_molda=caret::confusionMatrix(factor(predictions_lda_molda),factor(dati_test$Y))
 res_lda_campio=caret::confusionMatrix(predictions_lda$class,factor(dati_test$Y))
 
-kable(as.table(res_lda_campio$table), "html") %>%
+kable(as.table(res_lda_campio_molda$table), "html") %>%
    kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  cat(., file = "confusion_matrix_pops.docx")
+  cat(., file = "confusion_matrix_pops_sampling_sites.docx")
 
-kable(as.table(round(res_lda_campio$overall,2)), "html") %>%
+kable(as.table(round(res_lda_campio_molda$overall,2)), "html") %>%
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  cat(., file = "confusion_accuracy_pops.docx")
+  cat(., file = "confusion_accuracy_pops_sampling_sites.docx")
 
-kable(as.table(format(res_lda_campio$byClass,digits=1)), "html") %>%
+kable(as.table(format(res_lda_campio_molda$byClass,digits=1)), "html") %>%
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  cat(., file = "confusion_acc_byClass_pops.docx")
+  cat(., file = "confusion_acc_byClass_pops_sampling_sites.docx")
 
 ###########################################################################################################################################
 # plots 
@@ -385,7 +434,7 @@ centroids <- aggregate(.~popolazioni, dataset, mean)[,1:3]
 # plot LDA sampling populations
 
 
-eli_lda <- lda_ord(dati_train[,1:33], dati_train[,34], axes.scale = "standardized")
+eli_lda <- lda_ord(dati_train[,1:34], dati_train[,35], axes.scale = "standardized")
 
 eli_lda %>%
   as_tbl_ord() %>%
@@ -401,7 +450,7 @@ eli_lda %>%
     size = data, 
     alpha = data
   )) +
-  ggtitle('Linear discriminant analysis (LDA) biplot of wild population') +
+  ggtitle('Linear discriminant analysis biplot of wild populations') +
   expand_limits(y = c(-3, 5))+
   labs(color = "Populations",subtitle="By sampling sites")
 
@@ -418,33 +467,50 @@ dati_test=X[-training.samples, ]
 dati_test$Y=Y[-training.samples]
 dati_train$Y=Y[training.samples]
 
+
+model_folda_isole <- folda(datX = X, response = Y, subsetMethod = "all")
+model_folda_isole
 model <- lda(Y~., data =dati_train)
 predictions_train_lda <- model %>% predict(dati_train)
 predictions_lda <- model %>% predict(dati_test)
+predictions_lda_molda <- predict(model_folda_isole,dati_test)
 model_accuracy_lda=mean(predictions_lda$class==dati_test$Y)
-models_accuracy_isole=data.frame(model_accuracy_lda=model_accuracy_lda)
+
+
+
+LD_1_2=model$scaling[,1:2] 
+eigvalues<-scale(model$scaling, F, sqrt(colSums(model$scaling^2)))
+manova1<-manova(as.matrix(X)~Y)
+summary(manova1,test="Wilks")
+aa=discriminant.significance(model$scaling,
+                             dim(dati_train)[2]-1,
+                             length(unique(dati_train$Y)),
+                             dim(dati_train)[1])
+gw_obj = greedy.wilks(Y ~ ., data=dati_train, niveau= 0.5) 
+gw_obj
 
 ##################################################################################################################
-# Accuracy statistic  classification of isole 
+# Accuracy statistics  classification
 
+res_lda_isole_molda=caret::confusionMatrix(factor(predictions_lda_molda),factor(dati_test$Y))
 res_lda_isole=caret::confusionMatrix(predictions_lda$class,factor(dati_test$Y))
 
-kable(as.table(res_lda_isole$table), "html") %>%
+kable(as.table(res_lda_isole_molda$table), "html") %>%
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  cat(., file = "confusion_matrix_isole.docx")
+  cat(., file = "confusion_matrix_pops_isole.docx")
 
-kable(as.table(round(res_lda_isole$overall,2)), "html") %>%
+kable(as.table(round(res_lda_isole_molda$overall,2)), "html") %>%
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  cat(., file = "confusion_accuracy_isole.docx")
+  cat(., file = "confusion_accuracy_pops_isole.docx")
 
-kable(as.table(format(res_lda_isole$byClass,digits=1)), "html") %>%
+kable(as.table(format(res_lda_isole_molda$byClass,digits=1)), "html") %>%
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  cat(., file = "confusion_acc_byClass_isole.docx")
+  cat(., file = "confusion_acc_byClass_pops_isole.docx")
 
 ###########################################################################################################################################
 # LDA plots Isole
 
-eli_lda <- lda_ord(dati_train[,1:33], dati_train[,34], axes.scale = "standardized")
+eli_lda <- lda_ord(dati_train[,1:34], dati_train[,35], axes.scale = "standardized")
 
 eli_lda %>%
   as_tbl_ord() %>%
@@ -460,11 +526,15 @@ eli_lda %>%
     size = data, 
     alpha = data
   )) +
-  ggtitle('Linear discriminant analysis (LDA) biplot of wild population') +
+  ggtitle('Linear discriminant analysis biplot of wild populations') +
   expand_limits(y = c(-3, 5))+
   labs(color = "Isole",,subtitle="By islands")
 
 #############################################################################
+
+
+
+
 
 ##########################################################################
 # Code References
@@ -476,10 +546,9 @@ eli_lda %>%
 # https://corybrunson.github.io/ordr/reference/lda-ord.html
 
 
-##########################################################################
-# Other  References
-
 # D. A. Belsley (1991). Conditioning diagnostics: collinearity and weak dara in regression. John Wiley & Sons, New York.
+
+
 #' Kolde R (2019). _pheatmap: Pretty Heatmaps_. R package version 1.0.12,
 #' <https://CRAN.R-project.org/package=pheatmap>.
 #' 

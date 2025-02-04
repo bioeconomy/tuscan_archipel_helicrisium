@@ -30,7 +30,8 @@ library(ordr)
 library(ordr.extra)
 library(caret)
 library(multiColl)
-
+library(klaR)
+library(folda)
 ########################################################################
 library(knitr)
 library(kableExtra)
@@ -95,6 +96,51 @@ cor.mtest <- function(mat, ...) {
   colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
   p.mat
 }
+
+
+discriminant.significance <- function(eigenvalues, p, k, N) {
+  w <- N - 1 - .5 * (p + k)
+  t <- sqrt((p^2 * (k - 1)^2 - 4) / (p^2 + (k - 1)^2 - 5))
+  df1 <- p * (k - 1)
+  df2 <- w * t - .5 * (p * (k - 1) - 2)
+  lambda1 <- prod(1 / (1 + eigenvalues))
+  f1 <- (1 - lambda1^(1/t)) / (lambda1^(1/t)) * df2 / df1
+  p1 <- pf(f1, df1, df2, lower.tail = F)
+  
+  result <- NULL
+  for (i in 2:p) {
+    m <- i
+    
+    if (m == p) {
+      t.i <- 1
+    } else {
+      t.i <- sqrt(((p - m + 1)^2 * (k - m)^2 - 4) / ((p - m + 1)^2 + (k - m)^2 - 5))
+    }
+    
+    df1.i <- (p - m + 1) * (k - m)
+    df2.i <- w * t.i - .5 * ((p - m + 1) * (k - m) - 2)
+    lambda.i <- prod(1 / (1 + eigenvalues[i:p]))
+    f.i <- (1 - lambda.i^(1/t.i)) / lambda.i^(1/t.i) * df2.i / df1.i
+    p.i <- pf(f.i, df1.i, df2.i, lower.tail = F)    
+    result <- rbind(result, data.frame(lambda.i, f.i, p.i))
+  }
+  res <- rbind(c(lambda1, f1, p1), result)
+  colnames(res) <- c('Lambda', 'Approximate F', 'p-value')
+  return(res)
+}
+
+# y           LDA score (`predict(iris.lda)$x`)
+# a = 0       (no intercept since the data is centered)
+# b1, b2, ... LDA coefficients (`$scaling`)
+# x1, x2, ... centered data (at mean of group `$means`)
+
+# LD model$scaling[,1:2] 
+# eigvalues<-scale(model$scaling, F, sqrt(colSums(model$scaling^2)))
+# N <- dim(data)[1] raws
+# p <- dim(data)[2] - 1 column
+# k <- length(unique(root$Tree.Number)) # gruppi
+
+
 ############################################################################################
 # references
 
