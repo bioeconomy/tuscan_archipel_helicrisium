@@ -1,8 +1,19 @@
 #######################################################################################################
 # to install packages
 
+#######################################################################################################
+# before to run code you have to install R packages:  
 
-
+# please use pak::pkg_install function available in R packages pkg 
+# install.packages("pak")
+# pak::pkg_install(c("ordr","ordr.extra","devtools","tidyverse","knitr","cluster","factoextra",
+#                   "flexclust","clustertend","ClusterR","Cluster","smacof",
+#                    "gridExtra","MASS","paran","BBmisc","ggplot2","ggcorrplot","ggbiplot",
+#                    "caret","heplots","spls","ggpubr","performance","FactoMineR",
+#                    "CCA","flextable","kableExtra","klaR","hopkins","clusterSim",
+#                    "matrixTests","multiColl","moments","psych","skimr","gtsummary"))
+# pak::pkg_install(c("ordr","ordr.extra",
+# or in ordinary way
 # install.packages(c("devtools","tidyverse","knitr","cluster","factoextra",
 #                   "flexclust","clustertend","ClusterR","Cluster","smacof",
 #                    "gridExtra","MASS","paran","BBmisc","ggplot2","ggcorrplot","ggbiplot",
